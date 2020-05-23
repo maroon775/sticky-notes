@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "baseUrl": "./",
+    "noImplicitAny": true,
+    "target": "es5",
+    "jsx": "preserve",
+    "allowJs": true,
+    "sourceMap": true,
+    "module": "commonjs",
+    "isolatedModules": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+//    "inlineSourceMap": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "./src/**/*",
+  ]
+}
