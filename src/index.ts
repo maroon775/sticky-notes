@@ -15,7 +15,18 @@ import {StickyNotes} from "./StickyNotes";
 
     if (containerNode) {
         const stickyNotesComponent = new StickyNotes({
-            container: containerNode
+            container: containerNode,
+            contentOptions: {
+                resizable: false
+            },
+            options: {
+                position: () => {
+                    return {
+                        top: 10,
+                        left: 10
+                    }
+                }
+            }
         });
 
         stickyNotesComponent.render();

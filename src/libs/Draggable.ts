@@ -1,14 +1,11 @@
+import {Position} from "../interfaces";
+
 function getElementCoords(elem: HTMLElement) {
     var box = elem.getBoundingClientRect();
     return {
         top: box.top + pageYOffset,
         left: box.left + pageXOffset
     };
-}
-
-interface Position {
-    left: number
-    top: number
 }
 
 interface DraggableOptions {
@@ -20,7 +17,7 @@ interface DraggableOptions {
 }
 
 export class Draggable {
-    private shifts:Position = {
+    private shifts: Position = {
         left: 0,
         top: 0
     };
@@ -34,54 +31,57 @@ export class Draggable {
             left: (event.pageX - this.shifts.left),
             top: (event.pageY - this.shifts.top)
         };
-        this.element.style.left = `${this.position.left}px`;
-        this.element.style.top = `${this.position.top}px`;
     };
 
-    constructor(public element: HTMLElement, private options?: DraggableOptions) {
+    constructor(public draggable: HTMLElement, public grabbed: HTMLElement, private options?: DraggableOptions) {
         this.options = this.options || {};
-        this.element.addEventListener('mousedown', this.mouseDownHandler);
-        this.element.addEventListener('dragstart', this.dragstartHandler);
+        this.grabbed.addEventListener('mousedown', this.mouseDownHandler);
+        this.grabbed.addEventListener('dragstart', this.preventHandler);
     }
 
-    private dragstartHandler = () => (event: MouseEvent) => {
-        event.preventDefault();
+    private preventHandler = () => (event: MouseEvent) => {
+        if (event.stopPropagation) event.stopPropagation();
+        if (event.preventDefault) event.preventDefault();
+        event.cancelBubble = true;
+        event.returnValue = false;
         return false;
     };
 
     private mouseMoveHandler = (event: MouseEvent) => {
+        const selection = window.getSelection();
+        if(selection) {
+            selection.removeAllRanges()
+        }
+
         this.move(event);
         this.onMove();
     };
 
     private mouseUpHandler = () => {
         document.removeEventListener('mousemove', this.mouseMoveHandler);
-        this.element.removeEventListener('mouseup', this.mouseUpHandler);
+        this.grabbed.removeEventListener('mouseup', this.mouseUpHandler);
         this.onEnd();
     };
 
     private mouseDownHandler = (event: MouseEvent) => {
-        const coords = getElementCoords(this.element);
+        const coords = getElementCoords(this.grabbed);
         this.shifts.left = event.pageX - coords.left;
         this.shifts.top = event.pageY - coords.top;
-
-        this.element.style.position = 'absolute';
-        this.element.style.zIndex = '1000';
 
         this.move(event);
 
         this.onStart();
 
         document.addEventListener('mousemove', this.mouseMoveHandler);
-        this.element.addEventListener('mouseup', this.mouseUpHandler);
+        this.grabbed.addEventListener('mouseup', this.mouseUpHandler);
     };
 
 
-    public detachEvents() {
+    public destroy() {
         document.removeEventListener('mousemove', this.mouseMoveHandler);
-        this.element.removeEventListener('mouseup', this.mouseUpHandler);
-        this.element.removeEventListener('mousedown', this.mouseDownHandler);
-        this.element.removeEventListener('dragstart', this.dragstartHandler);
+        this.grabbed.removeEventListener('mouseup', this.mouseUpHandler);
+        this.grabbed.removeEventListener('mousedown', this.mouseDownHandler);
+        this.grabbed.removeEventListener('dragstart', this.preventHandler);
     }
 
     private onStart() {

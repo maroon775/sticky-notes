@@ -1,4 +1,4 @@
-export type RenderType = Element | null | undefined | void;
+export type RenderType = HTMLElement | null | undefined | void;
 export type Props = {
     [propertyName: string]: any
 };
@@ -12,7 +12,13 @@ export interface IComponent<P extends Props> {
 }
 
 export class Component<P extends {}> implements IComponent<P> {
-    constructor(public props :P) {}
+    public props: P;
+
+    constructor(props: P) {
+        const defaultProps = Object.getPrototypeOf(this).constructor.defaultProps;
+        this.props = defaultProps ? {...defaultProps, ...props} : props;
+        console.log(this.props, defaultProps);
+    }
 
     render(): RenderType {
         throw new Error('Method render should be implemented');

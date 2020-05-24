@@ -1,20 +1,27 @@
 import {Component} from "./Component";
 
 import {ButtonAdd, IButtonAddProps} from './ButtonAdd';
-import {IStickyProps, StickyItem} from "./StickyItem";
+import {IStickyItemProps, StickyItem} from "./StickyItem";
 import {ButtonsBar} from "./ButtonsBar";
 import {Textarea} from "./StickyContent/Textarea";
+import {StickyContentProps} from "./StickyContent/StickyContent";
+import {Position} from "./interfaces";
 
 type Button = ButtonAdd<IButtonAddProps>;
 
 export interface IStickyNotesProps {
     container: Element
+    options?: {
+        position?: Position | (()=>Position)
+    }
+    contentOptions: StickyContentProps
+
 }
 
 export interface IStickyNotes {
     button: Button;
     buttonsBar: ButtonsBar<{ buttons: [Button] }>
-    stickers: StickyItem<IStickyProps>[]
+    stickers: StickyItem<IStickyItemProps>[]
 
     createButton(): void
 
@@ -24,7 +31,7 @@ export interface IStickyNotes {
 export class StickyNotes<P extends IStickyNotesProps> extends Component<P> implements IStickyNotes {
     public button!: Button;
     public buttonsBar!: ButtonsBar<{ buttons: [Button] }>;
-    public stickers: StickyItem<IStickyProps>[];
+    public stickers: StickyItem<IStickyItemProps>[];
 
     constructor(props: P) {
         super(props);
@@ -34,8 +41,7 @@ export class StickyNotes<P extends IStickyNotesProps> extends Component<P> imple
 
     createButton(): void {
         this.button = new ButtonAdd({
-            className: 'sticky-notes__buttonCreate',
-            content: 'Add note',
+            content: 'ADD NOTE',
             onClick: this.createSticky.bind(this)
         });
     }
@@ -56,19 +62,22 @@ export class StickyNotes<P extends IStickyNotesProps> extends Component<P> imple
     }
 
     createSticky(): void {
-        const sticky = new StickyItem({
-            index: ( this.stickers.length ) + 1,
-            contentComponent: new Textarea({}),
-            position: {
-                top: 300,
-                left: (300*( this.stickers.length) + 20)
-            },
-            size: {
-                width: 250,
-                height: 200
-            },
-            onRemove: this.onStickerRemove.bind(this)
-        });
+        const stickyItemProps:IStickyItemProps = {
+            index: (this.stickers.length) + 1,
+            contentComponent: new Textarea(this.props.contentOptions),
+            onRemove: this.onStickerRemove.bind(this),
+        };
+        if(this.props.options && this.props.options.position) {
+            if(typeof this.props.options.position === 'function'){
+                stickyItemProps.position = this.props.options.position();
+            } else {
+                stickyItemProps.position = {
+                    top: this.props.options.position.top || 0,
+                    left: this.props.options.position.left || 0
+                };
+            }
+        }
+        const sticky = new StickyItem(stickyItemProps);
         sticky.render();
 
         if (sticky.element) {

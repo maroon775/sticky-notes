@@ -1,5 +1,7 @@
-import {Component} from "./Component";
-import {Draggable} from "./libs/Draggable";
+import {Component} from './Component';
+import {Draggable} from './libs/Draggable';
+import * as styles from './StickyItem.less';
+import {IStickyContent, StickyContentProps} from "./StickyContent/StickyContent";
 
 export type StickyElement = HTMLElement;
 
@@ -7,16 +9,11 @@ type Position = {
     left: number
     top: number
 }
-type Size = {
-    width: number
-    height: number
-}
 
-export interface IStickyProps {
+export interface IStickyItemProps {
     index: number,
-    contentComponent: Component<{}>
-    position: Position
-    size: Size
+    contentComponent: IStickyContent<StickyContentProps>
+    position?: Position
 
     onRemove?(id: number): boolean | void
 }
@@ -25,57 +22,68 @@ export interface IStickyItem {
     id: number
     element: StickyElement
     position: Position
-    size: Size
 }
 
-export class StickyItem<P extends IStickyProps> extends Component<P> implements IStickyItem {
+export class StickyItem<P extends IStickyItemProps> extends Component<P> implements IStickyItem {
+    public static defaultProps = {
+        position: {
+            top: 0,
+            left: 0
+        }
+    };
     id: number;
     element: StickyElement;
     position!: Position;
-    size!: Size;
+    private dragManager!: Draggable;
 
-    private dragManager: Draggable;
-
-    onRemove() {
-        // noinspection PointlessBooleanExpressionJS
+    private onRemove() {
         const canRemove = (this.props.onRemove && this.props.onRemove(this.id) !== false) || true;
 
         if (canRemove) {
-            this.dragManager.detachEvents();
+            this.dragManager.destroy();
             this.element.remove();
+            this.props.contentComponent.destroy()
         }
     };
 
     constructor(props: P) {
         super(props);
+
         this.id = Date.now();
         this.element = document.createElement('div');
-        this.dragManager = new Draggable(this.element, {
-            onStart: (position: Position): void => {
-                this.element.classList.add('sticky-item_moved');
-            },
-            onMove: (position: Position): void => {
-                this.position = position;
-            },
-            onEnd: (position: Position): void =>  {
-                this.element.classList.remove('sticky-item_moved');
-            }
-        });
+        this.setPosition(this.props.position!);
     }
 
     private renderHeader(): HTMLElement {
         const header = document.createElement('div');
-        header.setAttribute('style', `
-            background:#ccc;
-            cursor: move;
-        `);
-        header.className = 'sticky-item__header';
+        header.className = styles.stickyItem__header;
+
+        const draggablePanel = document.createElement('div');
+        draggablePanel.className = styles.stickyItem__draggable;
+        header.appendChild(draggablePanel);
+
+        this.dragManager = new Draggable(this.element, draggablePanel, {
+            onStart: (): void => {
+                this.element.classList.add(styles.stickyItem__moveStart);
+                this.element.style.zIndex = String(this.props.index)+1000
+            },
+            onMove: (position: Position): void => {
+                this.setPosition(position);
+
+                if(!this.element.classList.contains(styles.stickyItem__move))
+                    this.element.classList.add(styles.stickyItem__move);
+            },
+            onEnd: (): void => {
+                this.element.classList.remove(styles.stickyItem__moveStart);
+                this.element.classList.remove(styles.stickyItem__move);
+                this.element.style.zIndex = String(this.props.index)
+            }
+        });
 
         const buttonRemove = document.createElement('button');
-        buttonRemove.className = 'sticky-item__buttonRemove';
+        buttonRemove.className = styles.stickyItem__remove;
         buttonRemove.innerHTML = 'Remove';
         buttonRemove.addEventListener('click', this.onRemove.bind(this));
-
         header.appendChild(buttonRemove);
 
         return header;
@@ -83,39 +91,20 @@ export class StickyItem<P extends IStickyProps> extends Component<P> implements 
 
     private renderContent(): HTMLElement {
         const stickyContent = document.createElement('div');
-        stickyContent.className = 'sticky-item__content';
+        stickyContent.className = styles.stickyItem__content;
 
         const contentComponent = this.props.contentComponent.render();
         if (contentComponent) {
             stickyContent.appendChild(contentComponent);
-
-            stickyContent.addEventListener('mousedown', (event: MouseEvent) => {
-                event.stopPropagation();
-            })
         }
 
         return stickyContent;
     }
 
-    onChangePosition() {
-
-    }
-
     setPosition(position: Position) {
         this.position = position;
-        this.element.style.top = `${position.top}px`;
-        this.element.style.left = `${position.left}px`;
-    }
-
-
-    onChangeSize() {
-
-    }
-
-    setSize(size: Size) {
-        this.size = size;
-        this.element.style.width = `${size.width}px`;
-        this.element.style.height = `${size.height}px`;
+        this.element.style.top = `${this.position.top}px`;
+        this.element.style.left = `${this.position.left}px`;
     }
 
     render() {
@@ -123,16 +112,8 @@ export class StickyItem<P extends IStickyProps> extends Component<P> implements 
         const content = this.renderContent();
 
         this.element.setAttribute('data-sticky-id', String(this.id));
-        this.element.className = 'sticky-item';
-
-        this.element.setAttribute('style', `
-            position: absolute;
-            background: #AA9683;
-            z-index: ${String(this.props.index)};
-            min-width: ${this.props.size.width}px;
-            min-height: ${this.props.size.height}px;
-        `);
-        this.setPosition(this.props.position);
+        this.element.className = styles.stickyItem;
+        this.element.style.zIndex = String(this.props.index);
 
         this.element.appendChild(header);
         this.element.appendChild(content);

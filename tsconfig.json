@@ -3,7 +3,12 @@
     "outDir": "./dist/",
     "baseUrl": "./",
     "noImplicitAny": true,
-    "target": "es5",
+    "target": "es6",
+    "lib": [
+      "DOM",
+      "ES6",
+      "ES7"
+    ],
     "jsx": "preserve",
     "allowJs": true,
     "sourceMap": true,
