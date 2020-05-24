@@ -1,6 +1,15 @@
-import {StickyNotes} from "./StickyNotes";
+import {StickyNotes as StickyNotesComponent} from "./StickyNotes";
+import {Position} from "./interfaces";
+import {StickyContentProps} from "./StickyContent/StickyContent";
 
-(<any>window).StickyNotes = function (container: Element | string) {
+interface StickyNotesOptions {
+    options?: {
+        position?: Position | (() => Position)
+    }
+    contentOptions: StickyContentProps
+}
+
+(<any>window).StickyNotes = function (container: Element | string, options: StickyNotesOptions) {
     let containerNode: Element;
 
     if (typeof container === 'string') {
@@ -14,22 +23,17 @@ import {StickyNotes} from "./StickyNotes";
     }
 
     if (containerNode) {
-        const stickyNotesComponent = new StickyNotes({
+        const component = new StickyNotesComponent({
             container: containerNode,
-            contentOptions: {
-                resizable: false
-            },
-            options: {
-                position: () => {
-                    return {
-                        top: 10,
-                        left: 10
-                    }
-                }
-            }
+            ...options
         });
 
-        stickyNotesComponent.render();
-        console.log(stickyNotesComponent);
+        component.render();
+
+        return {
+            disableStickers: () => component.stickers.forEach(item=> item.disable()),
+            enableStickers: () => component.stickers.forEach(item=> item.enable()),
+            getStickers: () => component.stickers.map(item => item.content.toString())
+        }
     }
 };

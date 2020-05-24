@@ -4,7 +4,7 @@
 .stickyItem {
 	position: absolute;
 	background: @yellowPrimary;
-	border: 2px solid @yellowSecondary;
+	border: 1px solid @yellowSecondary;
 	border-top: 0;
 	//resize: both;
 	overflow: hidden;
@@ -18,7 +18,7 @@
 
 .stickyItem__draggable {
 	width: 100%;
-	height: 2px;
+	height: 1px;
 	z-index: 1;
 	cursor: grab;
 	transition: all 0.3s;
@@ -94,13 +94,13 @@
 }
 
 
-
-.stickyItem:hover {
+.stickyItem:not([disabled]):hover {
 	.stickyItem__draggable {
 		height: 18px;
 		opacity: 1;
 		transform: scale(1);
 	}
+
 	.stickyItem__remove {
 		opacity: 1;
 		transform: scale(1);

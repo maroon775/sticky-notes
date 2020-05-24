@@ -15,7 +15,6 @@ export interface IStickyNotesProps {
         position?: Position | (()=>Position)
     }
     contentOptions: StickyContentProps
-
 }
 
 export interface IStickyNotes {

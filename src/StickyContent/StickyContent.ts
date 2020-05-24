@@ -14,7 +14,10 @@ export interface StickyContentProps {
 
 export interface IStickyContent<P> extends IComponent<P> {
     destroy(): void
+
     setSize(size: Size): void
+
+    toString(): string
 }
 
 export class StickyContent<P extends StickyContentProps> extends Component<P> implements IStickyContent<P> {

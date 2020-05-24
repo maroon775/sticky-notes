@@ -106,4 +106,5 @@ export class Resizable {
             this.options!.onEnd(this.size);
         }
     }
+
 }

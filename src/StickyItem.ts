@@ -25,24 +25,23 @@ export interface IStickyItem {
 }
 
 export class StickyItem<P extends IStickyItemProps> extends Component<P> implements IStickyItem {
+    private dragManager!: Draggable;
     public static defaultProps = {
         position: {
             top: 0,
             left: 0
         }
     };
-    id: number;
-    element: StickyElement;
-    position!: Position;
-    private dragManager!: Draggable;
+    public id: number;
+    public element: StickyElement;
+    public position!: Position;
+    public content!: IStickyContent<StickyContentProps>;
 
     private onRemove() {
         const canRemove = (this.props.onRemove && this.props.onRemove(this.id) !== false) || true;
 
         if (canRemove) {
-            this.dragManager.destroy();
-            this.element.remove();
-            this.props.contentComponent.destroy()
+            this.destroy();
         }
     };
 
@@ -50,6 +49,7 @@ export class StickyItem<P extends IStickyItemProps> extends Component<P> impleme
         super(props);
 
         this.id = Date.now();
+        this.content = this.props.contentComponent;
         this.element = document.createElement('div');
         this.setPosition(this.props.position!);
     }
@@ -65,12 +65,12 @@ export class StickyItem<P extends IStickyItemProps> extends Component<P> impleme
         this.dragManager = new Draggable(this.element, draggablePanel, {
             onStart: (): void => {
                 this.element.classList.add(styles.stickyItem__moveStart);
-                this.element.style.zIndex = String(this.props.index)+1000
+                this.element.style.zIndex = String(this.props.index) + 1000
             },
             onMove: (position: Position): void => {
                 this.setPosition(position);
 
-                if(!this.element.classList.contains(styles.stickyItem__move))
+                if (!this.element.classList.contains(styles.stickyItem__move))
                     this.element.classList.add(styles.stickyItem__move);
             },
             onEnd: (): void => {
@@ -93,9 +93,9 @@ export class StickyItem<P extends IStickyItemProps> extends Component<P> impleme
         const stickyContent = document.createElement('div');
         stickyContent.className = styles.stickyItem__content;
 
-        const contentComponent = this.props.contentComponent.render();
-        if (contentComponent) {
-            stickyContent.appendChild(contentComponent);
+        const content = this.content.render();
+        if (content) {
+            stickyContent.appendChild(content);
         }
 
         return stickyContent;
@@ -117,5 +117,19 @@ export class StickyItem<P extends IStickyItemProps> extends Component<P> impleme
 
         this.element.appendChild(header);
         this.element.appendChild(content);
+    }
+
+    disable = () => {
+        this.element.setAttribute('disabled', 'disabled');
+    };
+
+    enable = () => {
+        this.element.removeAttribute('disabled');
+    };
+
+    public destroy () {
+        this.dragManager.destroy();
+        this.content.destroy();
+        this.element.remove();
     }
 }

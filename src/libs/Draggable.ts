@@ -59,7 +59,7 @@ export class Draggable {
 
     private mouseUpHandler = () => {
         document.removeEventListener('mousemove', this.mouseMoveHandler);
-        this.grabbed.removeEventListener('mouseup', this.mouseUpHandler);
+        document.removeEventListener('mouseup', this.mouseUpHandler);
         this.onEnd();
     };
 
@@ -73,13 +73,13 @@ export class Draggable {
         this.onStart();
 
         document.addEventListener('mousemove', this.mouseMoveHandler);
-        this.grabbed.addEventListener('mouseup', this.mouseUpHandler);
+        document.addEventListener('mouseup', this.mouseUpHandler);
     };
 
 
     public destroy() {
         document.removeEventListener('mousemove', this.mouseMoveHandler);
-        this.grabbed.removeEventListener('mouseup', this.mouseUpHandler);
+        document.removeEventListener('mouseup', this.mouseUpHandler);
         this.grabbed.removeEventListener('mousedown', this.mouseDownHandler);
         this.grabbed.removeEventListener('dragstart', this.preventHandler);
     }

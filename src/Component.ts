@@ -17,7 +17,8 @@ export class Component<P extends {}> implements IComponent<P> {
     constructor(props: P) {
         const defaultProps = Object.getPrototypeOf(this).constructor.defaultProps;
         this.props = defaultProps ? {...defaultProps, ...props} : props;
-        console.log(this.props, defaultProps);
+
+        console.log(this, this.props, defaultProps);
     }
 
     render(): RenderType {

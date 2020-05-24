@@ -30,40 +30,75 @@ export class Textarea<P extends TextareaProps> extends Component<P> implements I
 
     private size!: Size;
     private resizeManager?: Resizable;
+    public editor!: HTMLTextAreaElement;
+    public editorStatic!: HTMLElement;
     public element!: HTMLElement;
+
+    public toString() {
+        return this.editor.value;
+    }
 
     constructor(props: P) {
         super(props);
-        console.log('Textarea', this.props);
+
+        this.element = document.createElement('div');
+        this.editorStatic = document.createElement('div');
+        this.editor = document.createElement('textarea');
     }
 
+    private syncEditors = () => {
+        this.editorStatic.innerText = this.toString();
+    };
+
     render() {
-        const outer = document.createElement('div');
+        this.editorStatic.className = styles.editorStatic;
 
-        this.element = document.createElement('textarea');
-        this.element.className = styles.editor;
-        outer.appendChild(this.element);
+        this.editor.className = styles.editor;
+        this.editor.addEventListener('keyup', this.syncEditors);
+        this.editor.addEventListener('change', this.syncEditors);
+        this.editor.addEventListener('paste', this.syncEditors);
+        this.resizeEnable();
 
-        if (this.props.resizable) {
-            this.resizeManager = new Resizable(outer, {
-                className: styles.resizer,
-                onResize: this.setSize
-            });
-        }
+        this.element.appendChild(this.editor);
 
         this.setSize({
             width: this.props.minWidth!,
             height: this.props.minHeight!,
         });
 
-
-        return outer;
+        return this.element;
     }
 
-    destroy() {
-        if(this.resizeManager) {
+    resizeEnable() {
+        if (this.props.resizable) {
+            this.resizeManager = new Resizable(this.element, {
+                className: styles.resizer,
+                onResize: this.setSize
+            });
+        }
+    }
+
+    resizeDisable() {
+        if (this.resizeManager) {
             this.resizeManager.destroy();
         }
+    }
+
+    disable() {
+        this.destroy();
+
+        this.element.replaceChild(this.editorStatic, this.editor);
+    }
+
+    enable() {
+        this.resizeEnable();
+
+        this.element.replaceChild(this.editor, this.editorStatic);
+    }
+
+
+    destroy() {
+        this.resizeDisable();
     }
 
     setSize = (size: Size) => {
@@ -72,7 +107,10 @@ export class Textarea<P extends TextareaProps> extends Component<P> implements I
             height: Math.max(Math.min(size.height, this.props.maxHeight || Infinity), this.props.minHeight!)
         };
 
-        this.element.style.width = `${this.size.width}px`;
-        this.element.style.height = `${this.size.height}px`;
+        this.editor.style.width = `${this.size.width}px`;
+        this.editor.style.height = `${this.size.height}px`;
+
+        this.editorStatic.style.width = `${this.size.width}px`;
+        this.editorStatic.style.height = `${this.size.height}px`;
     }
 }
