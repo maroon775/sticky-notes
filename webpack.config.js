@@ -1,6 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const config = require('./config.json');
 
 module.exports = {
     entry: {
@@ -16,9 +16,6 @@ module.exports = {
         watchContentBase: true,
         progress: true,
         stats: 'minimal',
-//        inline: false,
-//        injectClient: false,
-//        injectHot: false,
     },
     watchOptions: {
         aggregateTimeout: 300,
@@ -27,20 +24,23 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.css$/,
-                use: ['style-loader', 'css-loader']
-            },
-            {
                 test: /\.less$/,
                 use: [
                     {
                         loader: 'style-loader', // creates style nodes from JS strings
+                        options: {
+                            injectType: 'singletonStyleTag',
+                            attributes: {
+                                id: config.styleTagId
+                            }
+                        },
                     },
                     {
                         loader: 'css-loader', // translates CSS into CommonJS
                         options: {
                             modules: true,
                             importLoaders: 1,
+                            localsConvention: 'camelCase',
                         }
                     },
                     {
@@ -74,11 +74,11 @@ module.exports = {
     optimization: {
         minimize: true,
         /*minimizer: [
-            new UglifyJsPlugin({
-//                include: /\.min\.js$/,
-                test: /\.js(\?.*)?$/i,
-            })
-        ]*/
+                    new UglifyJsPlugin({
+        //                include: /\.min\.js$/,
+                        test: /\.js(\?.*)?$/i,
+                    })
+                ]*/
     },
     resolve: {
         extensions: ['.ts', '.js'],

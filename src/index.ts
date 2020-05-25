@@ -1,6 +1,7 @@
 import {CreateStickyOptions, StickyNotes as StickyNotesComponent} from "./StickyNotes";
 import {Textarea} from "./StickyContent/Textarea";
 import {IStickyItemProps, StickyItem} from "./StickyItem";
+import * as config from "../config.json";
 
 
 (<any>window).StickyNotes = function (container: Element | string) {
@@ -23,9 +24,16 @@ import {IStickyItemProps, StickyItem} from "./StickyItem";
         return {
             disableStickers: () => component.stickers.forEach(item=> item.disable()),
             enableStickers: () => component.stickers.forEach(item=> item.enable()),
-            getStickers: () => component.stickers.map(item => item.content.toString()),
+            getStickersContent: () => component.stickers.map(item => item.content.toString()),
             createSticker: (options: CreateStickyOptions): StickyItem<IStickyItemProps>  => {
                 return component.createSticky(options);
+            },
+            getStyleString: () => {
+                const styleNode = document.querySelector<HTMLStyleElement>('style#' + config.styleTagId);
+                if(styleNode)
+                {
+                    return styleNode.innerText;
+                }
             }
         }
     }
