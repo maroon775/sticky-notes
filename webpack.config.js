@@ -1,8 +1,12 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
-    entry: './src/index.ts',
+    entry: {
+        "bundle": './src/index.ts',
+//        "bundleMin": "./src/index.ts",
+    },
     devtool: 'inline-source-map',
     devServer: {
         historyApiFallback: true,
@@ -68,6 +72,15 @@ module.exports = {
             template: './public/index.html'
         })
     ],
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new UglifyJsPlugin({
+//                include: /\.min\.js$/,
+                test: /\.js(\?.*)?$/i,
+            })
+        ]
+    },
     resolve: {
         extensions: ['.ts', '.js'],
     },
