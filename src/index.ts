@@ -1,21 +1,15 @@
-import {StickyNotes as StickyNotesComponent} from "./StickyNotes";
-import {Position} from "./interfaces";
-import {StickyContentProps} from "./StickyContent/StickyContent";
+import {CreateStickyOptions, StickyNotes as StickyNotesComponent} from "./StickyNotes";
+import {Textarea} from "./StickyContent/Textarea";
+import {IStickyItemProps, StickyItem} from "./StickyItem";
 
-interface StickyNotesOptions {
-    options?: {
-        position?: Position | (() => Position)
-    }
-    contentOptions: StickyContentProps
-}
 
-(<any>window).StickyNotes = function (container: Element | string, options: StickyNotesOptions) {
-    let containerNode: Element;
+(<any>window).StickyNotes = function (container: Element | string) {
+    let containerNode: HTMLElement;
 
     if (typeof container === 'string') {
-        containerNode = document.querySelector(container)!;
+        containerNode = document.querySelector<HTMLElement>(container)!;
     } else {
-        if (container instanceof Element) {
+        if (container instanceof HTMLElement) {
             containerNode = container;
         } else {
             throw new Error('First argument of container is not valid.')
@@ -23,17 +17,23 @@ interface StickyNotesOptions {
     }
 
     if (containerNode) {
-        const component = new StickyNotesComponent({
-            container: containerNode,
-            ...options
-        });
+        const component = new StickyNotesComponent(containerNode);
 
-        component.render();
 
         return {
             disableStickers: () => component.stickers.forEach(item=> item.disable()),
             enableStickers: () => component.stickers.forEach(item=> item.enable()),
-            getStickers: () => component.stickers.map(item => item.content.toString())
+            getStickers: () => component.stickers.map(item => item.content.toString()),
+            createSticker: (options: CreateStickyOptions): StickyItem<IStickyItemProps>  => {
+                return component.createSticky(options);
+            }
         }
     }
+};
+
+(<any>window).StickyNotes.Components = {
+    content: {
+        Textarea
+    },
+    StickyItem
 };

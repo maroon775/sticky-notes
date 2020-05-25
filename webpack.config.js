@@ -5,7 +5,6 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 module.exports = {
     entry: {
         "bundle": './src/index.ts',
-//        "bundleMin": "./src/index.ts",
     },
     devtool: 'inline-source-map',
     devServer: {
@@ -74,12 +73,12 @@ module.exports = {
     ],
     optimization: {
         minimize: true,
-        minimizer: [
+        /*minimizer: [
             new UglifyJsPlugin({
 //                include: /\.min\.js$/,
                 test: /\.js(\?.*)?$/i,
             })
-        ]
+        ]*/
     },
     resolve: {
         extensions: ['.ts', '.js'],

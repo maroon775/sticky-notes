@@ -19,6 +19,7 @@ export interface IStickyContent<P> extends IComponent<P> {
 
     toString(): string
 }
+/*
 
 export class StickyContent<P extends StickyContentProps> extends Component<P> implements IStickyContent<P> {
     protected resizeManager?: Resizable;
@@ -46,3 +47,4 @@ export class StickyContent<P extends StickyContentProps> extends Component<P> im
         return this.content;
     }
 }
+*/

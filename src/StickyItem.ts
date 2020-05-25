@@ -11,7 +11,7 @@ type Position = {
 }
 
 export interface IStickyItemProps {
-    index: number,
+    index: number
     contentComponent: IStickyContent<StickyContentProps>
     position?: Position
 
