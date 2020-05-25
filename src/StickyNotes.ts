@@ -12,7 +12,7 @@ type Button = ButtonAdd<IButtonAddProps>;
 export interface IStickyNotesProps {
     container: Element
     options?: {
-        position?: Position | (()=>Position)
+        position?: Position | (() => Position)
     }
     contentOptions: StickyContentProps
 }
@@ -61,13 +61,13 @@ export class StickyNotes<P extends IStickyNotesProps> extends Component<P> imple
     }
 
     createSticky(): void {
-        const stickyItemProps:IStickyItemProps = {
+        const stickyItemProps: IStickyItemProps = {
             index: (this.stickers.length) + 1,
             contentComponent: new Textarea(this.props.contentOptions),
             onRemove: this.onStickerRemove.bind(this),
         };
-        if(this.props.options && this.props.options.position) {
-            if(typeof this.props.options.position === 'function'){
+        if (this.props.options && this.props.options.position) {
+            if (typeof this.props.options.position === 'function') {
                 stickyItemProps.position = this.props.options.position();
             } else {
                 stickyItemProps.position = {
