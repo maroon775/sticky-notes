@@ -1,21 +1,25 @@
 
 Create instance with selector:  
   
-`const sticky = new StickyNotes('#container');`  
+```javasript
+const sticky = new StickyNotes('#container');
+```  
   
   
 Create instance with HTMLElement node:  
   
-`const Container = document.querySelector('#container');`  
-  
-`const sticky2 = new StickyNotes(Container);`  
+```javasript
+const Container = document.querySelector('#container');  
+const sticky2 = new StickyNotes(Container);
+```
   
   
 ### Arguments  
 Container - element node or selector for add new stickers    
 ```javascript  
-// container node usage const nontainerNode = document.querySelector('body .page #container')  
-const instanceWithNode = new StickyNotes(nontainerNode);   
+// container node usage 
+const containerNode = document.querySelector('body .page #container')  
+const instanceWithNode = new StickyNotes(сontainerNode);   
 // container selector usage  
 const instanceWithSelector = new StickyNotes('body .page #containerSelector'); 
 ```
@@ -42,7 +46,9 @@ const instanceWithSelector = new StickyNotes('body .page #containerSelector');
 #### Components  
   
 `StickyNotes.Components.content.Textarea` - Textarea component 
-**Options:**  
+
+**Options:** 
+
 | Option | Type | Required | Default value |  
 | ------ | ------ | ------ | ------ |  
 | `resizable` | Boolean | No | false |  
