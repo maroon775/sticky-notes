@@ -85,14 +85,12 @@ export class Textarea<P extends TextareaProps> extends Component<P> implements I
     }
 
     disable() {
-        this.destroy();
-
+        this.resizeDisable();
         this.element.replaceChild(this.editorStatic, this.editor);
     }
 
     enable() {
         this.resizeEnable();
-
         this.element.replaceChild(this.editor, this.editorStatic);
     }
 

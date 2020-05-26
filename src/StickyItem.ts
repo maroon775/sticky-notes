@@ -121,10 +121,12 @@ export class StickyItem<P extends IStickyItemProps> extends Component<P> impleme
 
     disable = () => {
         this.element.setAttribute('disabled', 'disabled');
+        this.content.disable();
     };
 
     enable = () => {
         this.element.removeAttribute('disabled');
+        this.content.enable();
     };
 
     public destroy () {
