@@ -22,6 +22,7 @@ export interface IStickyItem {
     id: number
     element: StickyElement
     position: Position
+    disabled: boolean
 }
 
 export class StickyItem<P extends IStickyItemProps> extends Component<P> implements IStickyItem {
@@ -36,6 +37,7 @@ export class StickyItem<P extends IStickyItemProps> extends Component<P> impleme
     public element: StickyElement;
     public position!: Position;
     public content!: IStickyContent<StickyContentProps>;
+    public disabled: boolean;
 
     private onRemove() {
         const canRemove = (this.props.onRemove && this.props.onRemove(this.id) !== false) || true;
@@ -48,6 +50,7 @@ export class StickyItem<P extends IStickyItemProps> extends Component<P> impleme
     constructor(props: P) {
         super(props);
 
+        this.disabled = false;
         this.id = Date.now();
         this.content = this.props.contentComponent;
         this.element = document.createElement('div');
@@ -120,13 +123,19 @@ export class StickyItem<P extends IStickyItemProps> extends Component<P> impleme
     }
 
     disable = () => {
-        this.element.setAttribute('disabled', 'disabled');
-        this.content.disable();
+        if(!this.disabled) {
+            this.element.setAttribute('disabled', 'disabled');
+            this.content.disable();
+            this.disabled = true;
+        }
     };
 
     enable = () => {
-        this.element.removeAttribute('disabled');
-        this.content.enable();
+        if(this.disabled) {
+            this.element.removeAttribute('disabled');
+            this.content.enable();
+            this.disabled = false;
+        }
     };
 
     public destroy () {
