@@ -34,7 +34,8 @@ document.addEventListener('readystatechange', function(event) {
         		position: {
         			left: 300, // optional
         			top: 300 // optional
-        		}
+        		},
+				startIndex: 1000 // optional starts value for zIndex
         	})
         });
     }
