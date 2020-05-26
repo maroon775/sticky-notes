@@ -42,6 +42,7 @@ const instanceWithSelector = new StickyNotes('body .page #containerSelector');
 | ------ | ------ | ------ | ------ |  
 | `contentComponent` | Component one of (`StickyNotes.Components.content`) | Yes | - |  
 | `position` | { top: Number, left: Number } | No | `{ top: 0, left: 0 }` |  
+| `startIndex` | Number | No | 0 |  
   
 #### Components  
   
@@ -116,12 +117,14 @@ document.querySelector('#addNoteAdvanced').addEventListener('click', function(){
 			maxHeight: 400, // optional  
 			
 			minWidth: 200, // optional & as initial width  
-			minHeight: 200, // optional & as initial height  
+			minHeight: 200, // optional & as initial height 
+
 		}),
 		position: {  
 			left: 300, // optional  
 			top: 300 // optional  
-		}
+		},
+        startIndex: 1000 // optional - zIndex start from startIndex option
 	})
 });
 ```

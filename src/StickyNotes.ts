@@ -6,6 +6,7 @@ import {Position} from "./interfaces";
 export interface CreateStickyOptions {
     contentComponent: IStickyContent<StickyContentProps>
     position?: Position
+    startIndex?: number
 }
 
 export interface IStickyNotes {
@@ -26,7 +27,7 @@ export class StickyNotes implements IStickyNotes {
     public createSticky(options: CreateStickyOptions): StickyItem<IStickyItemProps> {
         const stickyItemProps: IStickyItemProps = {
             ...options,
-            index: (this.stickers.length) + 1,
+            index: (this.stickers.length) + (options.startIndex || 0) + 1,
             onRemove: this.onStickerRemove.bind(this)
         };
 
