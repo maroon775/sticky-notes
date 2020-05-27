@@ -1,12 +1,5 @@
 import {Position} from "../interfaces";
 
-function getElementCoords(elem: HTMLElement) {
-    var box = elem.getBoundingClientRect();
-    return {
-        top: box.top + pageYOffset,
-        left: box.left + pageXOffset
-    };
-}
 
 interface DraggableOptions {
     onMove?(position: Position): void
@@ -49,7 +42,7 @@ export class Draggable {
 
     private mouseMoveHandler = (event: MouseEvent) => {
         const selection = window.getSelection();
-        if(selection) {
+        if (selection) {
             selection.removeAllRanges()
         }
 
@@ -64,9 +57,8 @@ export class Draggable {
     };
 
     private mouseDownHandler = (event: MouseEvent) => {
-        const coords = getElementCoords(this.grabbed);
-        this.shifts.left = event.pageX - coords.left;
-        this.shifts.top = event.pageY - coords.top;
+        this.shifts.left = event.pageX - this.draggable.offsetLeft;
+        this.shifts.top = event.pageY - this.draggable.offsetTop;
 
         this.move(event);
 
