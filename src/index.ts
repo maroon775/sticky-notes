@@ -1,6 +1,6 @@
 import {CreateStickyOptions, StickyNotes as StickyNotesComponent} from "./StickyNotes";
 import {Textarea} from "./StickyContent/Textarea";
-import {IStickyItemProps, StickyItem} from "./StickyItem";
+import {IStickyItemProps, StickyElement, StickyItem} from "./StickyItem";
 import * as config from "../config.json";
 
 
@@ -25,6 +25,8 @@ import * as config from "../config.json";
             disableStickers: () => component.stickers.forEach(item=> item.disable()),
             enableStickers: () => component.stickers.forEach(item=> item.enable()),
             getStickersContent: () => component.stickers.map(item => item.content.toString()),
+            getStickers: ():StickyItem<IStickyItemProps>[] => component.stickers,
+            removeStickers: () => component.stickers.forEach(item=> item.destroy()),
             createSticker: (options: CreateStickyOptions): StickyItem<IStickyItemProps>  => {
                 return component.createSticky(options);
             },

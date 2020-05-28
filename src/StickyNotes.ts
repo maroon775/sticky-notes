@@ -1,6 +1,7 @@
 import {IStickyItemProps, StickyItem} from "./StickyItem";
 import {IStickyContent, StickyContentProps} from "./StickyContent/StickyContent";
 import {Position} from "./interfaces";
+import * as styles from "./StickyNotes.less";
 
 
 export interface CreateStickyOptions {
@@ -17,9 +18,14 @@ export interface IStickyNotes {
 
 export class StickyNotes implements IStickyNotes {
     public stickers: StickyItem<IStickyItemProps>[] = [];
+    public container: HTMLElement;
 
+    constructor(container: HTMLElement) {
+        this.container = document.createElement('div');
+        this.container.className =[styles.container, 'sticky-notes'].join(' ');
 
-    constructor(public container: HTMLElement) {}
+        container.appendChild(this.container);
+    }
     onStickerRemove(id: number) {
         this.stickers = this.stickers.filter(item => item.id !== id);
     }

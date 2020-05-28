@@ -33,6 +33,8 @@ const instanceWithSelector = new StickyNotes('body .page #containerSelector');
 | `disableStickers()` | void | Disable all stickers for changes |  
 | `enableStickers()` | void | Enable all stickers for changes |  
 | `getStickersContent()`  | Array[String] | All stickers content as array strings |  
+| `getStickers()`  | Array[StickerItem] | All stickers(Component) array |  
+| `removeStickers()`  | void | Remove all stickers |  
 | `getStyleString()` | String | CSS styles as string |  
 | `createSticker(StickerItemOptions)` | StickerItem | Create new sticker |  
   
