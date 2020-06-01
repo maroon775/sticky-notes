@@ -27,6 +27,7 @@ export interface IStickyItem {
 
 export class StickyItem<P extends IStickyItemProps> extends Component<P> implements IStickyItem {
     private dragManager!: Draggable;
+    private _hoverTimer!: number;
     public static defaultProps = {
         position: {
             top: 0,
@@ -44,6 +45,23 @@ export class StickyItem<P extends IStickyItemProps> extends Component<P> impleme
 
         if (canRemove) {
             this.destroy();
+        }
+    };
+
+    private onMouseEnter = () => {
+        if(!this.disabled)
+        {
+            clearTimeout(this._hoverTimer);
+
+            this.element.classList.add(styles.stickyItem_hover);
+        }
+    };
+
+    private onMouseLeave = () => {
+        if(this.element.classList.contains(styles.stickyItem_hover)) {
+            this._hoverTimer = window.setTimeout(() => {
+                this.element.classList.remove(styles.stickyItem_hover);
+            }, 1500);
         }
     };
 
@@ -120,6 +138,9 @@ export class StickyItem<P extends IStickyItemProps> extends Component<P> impleme
 
         this.element.appendChild(header);
         this.element.appendChild(content);
+
+        this.element.addEventListener('mouseenter', this.onMouseEnter);
+        this.element.addEventListener('mouseleave', this.onMouseLeave);
     }
 
     disable = () => {

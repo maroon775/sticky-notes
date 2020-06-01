@@ -6,20 +6,23 @@
 	background: @yellowPrimary;
 	border: 1px solid @yellowSecondary;
 	border-top: 0;
-	overflow: hidden;
 	will-change: left, top, z-index;
 }
 
 .stickyItem__header {
 	background: @yellowSecondary;
 	overflow: hidden;
-	position: relative;
+	position: absolute;
+	z-index: 1;
+	bottom: 100%;
+	left: -1px;
+	right: -1px;
 }
 
 .stickyItem__draggable {
 	width: 100%;
 	height: 1px;
-	z-index: 1;
+	z-index: 2;
 	cursor: grab;
 	transition: all 0.3s;
 	opacity: 0;
@@ -40,7 +43,7 @@
 
 .stickyItem__moveStart {
 	box-shadow: 10px 10px 50px -15px #979797;
-	transform: scale(1.03) rotate(-2deg);
+	transform: scale(1.03) rotate(-1.5deg);
 
 	.stickyItem__draggable {
 		cursor: grabbing;
@@ -76,25 +79,10 @@
 
 .stickyItem__content {
 	position: relative;
+	z-index: 4;
 }
 
-.stickyItem__resizer {
-	position: absolute;
-	right: 0;
-	bottom: 0;
-	width: 15px;
-	height: 15px;
-	background-image: data-uri("image/svg+xml;base64", "./icons/resize.svg");
-	background-size: 10px;
-	background-color: transparent;
-	background-position: center;
-	background-repeat: no-repeat;
-	z-index: 5;
-	cursor: nwse-resize;
-}
-
-
-.stickyItem:not([disabled]):hover {
+.stickyItem_hover {
 	.stickyItem__draggable {
 		height: 18px;
 		opacity: 1;
