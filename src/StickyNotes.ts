@@ -19,8 +19,13 @@ export class StickyNotes implements IStickyNotes {
     public stickers: StickyItem<IStickyItemProps>[] = [];
 
     constructor(public container: HTMLElement) {
-        this.container.className ='sticky-notes';
-        this.container.style.position ='relative';
+        this.container.classList.add('sticky-notes');
+
+        const positionValue = window.getComputedStyle(this.container).position;
+
+        if(!positionValue || positionValue === 'static') {
+            this.container.style.position = 'relative';
+        }
     }
     onStickerRemove(id: number) {
         this.stickers = this.stickers.filter(item => item.id !== id);
